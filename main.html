@@ -52,10 +52,12 @@
         this.isDragging = true;
         this.offsetX = e.clientX - this.cube.offsetLeft;
         this.offsetY = e.clientY - this.cube.offsetTop;
+        this.cube.style.cursor = 'grabbing';
     }
 
     stopDrag() {
         this.isDragging = false;
+        this.cube.style.cursor = 'grab';
     }
 
     drag(e) {
@@ -72,6 +74,10 @@
         }
     }
 }
+
+const cubes = document.querySelectorAll('.cube');
+cubes.forEach((cube) => new DraggableCube(cube));
+
 
 </script>
 
