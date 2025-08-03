@@ -36,40 +36,42 @@
 
 <script>
 //Your code goes here 
-	
-const cubes = document.querySelectorAll('.cube');
-const container = document.querySelector('.container');
+	class DraggableCube {
+    constructor(cube) {
+        this.cube = cube;
+        this.isDragging = false;
+        this.offsetX = 0;
+        this.offsetY = 0;
 
-let selectedCube = null;
-let offsetX = 0;
-let offsetY = 0;
-
-cubes.forEach((cube) => {
-    cube.addEventListener('mousedown', (e) => {
-        selectedCube = cube;
-        offsetX = e.clientX - cube.offsetLeft;
-        offsetY = e.clientY - cube.offsetTop;
-    });
-});
-
-document.addEventListener('mouseup', () => {
-    selectedCube = null;
-});
-
-document.addEventListener('mousemove', (e) => {
-    if (selectedCube) {
-        let x = e.clientX - offsetX;
-        let y = e.clientY - offsetY;
-
-        // Boundary constraints
-        x = Math.max(0, Math.min(x, container.offsetWidth - selectedCube.offsetWidth));
-        y = Math.max(0, Math.min(y, container.offsetHeight - selectedCube.offsetHeight));
-
-        selectedCube.style.top = `${y}px`;
-        selectedCube.style.left = `${x}px`;
+        this.cube.addEventListener('mousedown', (e) => this.startDrag(e));
+        document.addEventListener('mouseup', () => this.stopDrag());
+        document.addEventListener('mousemove', (e) => this.drag(e));
     }
-});
 
+    startDrag(e) {
+        this.isDragging = true;
+        this.offsetX = e.clientX - this.cube.offsetLeft;
+        this.offsetY = e.clientY - this.cube.offsetTop;
+    }
+
+    stopDrag() {
+        this.isDragging = false;
+    }
+
+    drag(e) {
+        if (this.isDragging) {
+            const container = this.cube.parentNode;
+            let x = e.clientX - this.offsetX;
+            let y = e.clientY - this.offsetY;
+
+            x = Math.max(0, Math.min(x, container.offsetWidth - this.cube.offsetWidth));
+            y = Math.max(0, Math.min(y, container.offsetHeight - this.cube.offsetHeight));
+
+            this.cube.style.top = `${y}px`;
+            this.cube.style.left = `${x}px`;
+        }
+    }
+}
 
 </script>
 
