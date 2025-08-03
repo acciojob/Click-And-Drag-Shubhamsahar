@@ -36,6 +36,41 @@
 
 <script>
 //Your code goes here 
+	
+const cubes = document.querySelectorAll('.cube');
+const container = document.querySelector('.container');
+
+let selectedCube = null;
+let offsetX = 0;
+let offsetY = 0;
+
+cubes.forEach((cube) => {
+    cube.addEventListener('mousedown', (e) => {
+        selectedCube = cube;
+        offsetX = e.clientX - cube.offsetLeft;
+        offsetY = e.clientY - cube.offsetTop;
+    });
+});
+
+document.addEventListener('mouseup', () => {
+    selectedCube = null;
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (selectedCube) {
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+
+        // Boundary constraints
+        x = Math.max(0, Math.min(x, container.offsetWidth - selectedCube.offsetWidth));
+        y = Math.max(0, Math.min(y, container.offsetHeight - selectedCube.offsetHeight));
+
+        selectedCube.style.top = `${y}px`;
+        selectedCube.style.left = `${x}px`;
+    }
+});
+
+
 </script>
 
   </body>
