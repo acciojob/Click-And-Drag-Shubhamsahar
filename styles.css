@@ -68,3 +68,12 @@ body {
 
 .item:nth-child(even) { transform: scaleX(1.31) rotateY(40deg); }
 .item:nth-child(odd) { transform: scaleX(1.31) rotateY(-40deg); }
+
+
+.items {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border: 1px solid black;
+}
+
