@@ -1,14 +1,11 @@
-const todoItems = document.querySelectorAll('.todo-item');
+let draggedItem = null;
 
-todoItems.forEach((item) => {
-    item.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text', item.textContent);
-        item.style.opacity = 0.5;
-    });
-
-    item.addEventListener('dragend', () => {
-        item.style.opacity = 1;
-    });
+document.addEventListener('dragstart', (e) => {
+    if (e.target.classList.contains('todo-item')) {
+        draggedItem = e.target;
+        e.dataTransfer.setData('text', e.target.textContent);
+        e.target.style.opacity = 0.5;
+    }
 });
 
 document.addEventListener('dragover', (e) => {
@@ -17,14 +14,38 @@ document.addEventListener('dragover', (e) => {
 
 document.addEventListener('drop', (e) => {
     e.preventDefault();
-    const item = document.querySelector('.todo-item[style*="opacity: 0.5"]');
-    const target = e.target.closest('.todo-item');
-    if (target) {
-        const itemText = item.textContent;
-        const targetText = target.textContent;
-        item.textContent = targetText;
-        target.textContent = itemText;
+    if (draggedItem && e.target.classList.contains('todo-item')) {
+        const temp = draggedItem.textContent;
+        draggedItem.textContent = e.target.textContent;
+        e.target.textContent = temp;
     }
-    item.style.opacity = 1;
+    if (draggedItem) {
+        draggedItem.style.opacity = 1;
+    }
 });
+
+document.addEventListener('dragend', () => {
+    if (draggedItem) {
+        draggedItem.style.opacity = 1;
+    }
+});
+
+
+cypress/integration/todo-app.spec.js
+
+describe('example to-do app', () => {
+    beforeEach(() => {
+        cy.visit('index.html');
+    });
+
+    it('drag & drop works correctly', { timeout: 10000 }, () => {
+        cy.get('.todo-item').eq(0).trigger('dragstart', { force: true });
+        cy.get('.todo-item').eq(1).trigger('dragover', { force: true });
+        cy.get('.todo-item').eq(1).trigger('drop', { force: true });
+
+        cy.get('.todo-item').eq(0).should('contain', 'Item 2');
+        cy.get('.todo-item').eq(1).should('contain', 'Item 1');
+    });
+});
+
 
