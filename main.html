@@ -2,84 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Click and Drag</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draggable Cubes</title>
+  <style>
+    .container {
+      width: 600px;
+      height: 400px;
+      border: 2px solid #000;
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .cube {
+      width: 100px;
+      height: 100px;
+      background-color: #4CAF50;
+      margin: 5px;
+      position: absolute;
+      cursor: grab;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="items">
-    <div class="item item1">01</div>
-    <div class="item item2">02</div>
-    <div class="item item3">03</div>
-    <div class="item item4">04</div>
-    <div class="item item5">05</div>
-    <div class="item item6">06</div>
-    <div class="item item7">07</div>
-    <div class="item item8">08</div>
-    <div class="item item9">09</div>
-    <div class="item item10">10</div>
-    <div class="item item11">11</div>
-    <div class="item item12">12</div>
-    <div class="item item13">13</div>
-    <div class="item item14">14</div>
-    <div class="item item15">15</div>
-    <div class="item item16">16</div>
-    <div class="item item17">17</div>
-    <div class="item item18">18</div>
-    <div class="item item19">19</div>
-    <div class="item item20">20</div>
-    <div class="item item21">21</div>
-    <div class="item item22">22</div>
-    <div class="item item23">23</div>
-    <div class="item item24">24</div>
-    <div class="item item25">25</div>
+  <h1>Draggable Cubes</h1>
+  <div class="container" id="container">
+    <div class="cube" style="top: 0px; left: 0px;"></div>
+    <div class="cube" style="top: 0px; left: 110px;"></div>
+    <div class="cube" style="top: 0px; left: 220px;"></div>
+    <div class="cube" style="top: 110px; left: 0px;"></div>
+    <div class="cube" style="top: 110px; left: 110px;"></div>
+    <div class="cube" style="top: 110px; left: 220px;"></div>
   </div>
 
-<script>
-//Your code goes here 
-	class DraggableCube {
-    constructor(cube) {
-        this.cube = cube;
-        this.isDragging = false;
-        this.offsetX = 0;
-        this.offsetY = 0;
+  <script>
+    const container = document.getElementById("container");
+    const cubes = document.querySelectorAll(".cube");
+    let selectedCube = null;
+    let offsetX = 0;
+    let offsetY = 0;
 
-        this.cube.addEventListener('mousedown', (e) => this.startDrag(e));
-        document.addEventListener('mouseup', () => this.stopDrag());
-        document.addEventListener('mousemove', (e) => this.drag(e));
-    }
+    cubes.forEach(cube => {
+      cube.addEventListener("mousedown", (e) => {
+        selectedCube = cube;
+        offsetX = e.clientX - cube.offsetLeft;
+        offsetY = e.clientY - cube.offsetTop;
+        cube.style.cursor = "grabbing";
+      });
+    });
 
-    startDrag(e) {
-        this.isDragging = true;
-        this.offsetX = e.clientX - this.cube.offsetLeft;
-        this.offsetY = e.clientY - this.cube.offsetTop;
-        this.cube.style.cursor = 'grabbing';
-    }
+    document.addEventListener("mousemove", (e) => {
+      if (!selectedCube) return;
 
-    stopDrag() {
-        this.isDragging = false;
-        this.cube.style.cursor = 'grab';
-    }
+      let newX = e.clientX - offsetX;
+      let newY = e.clientY - offsetY;
 
-    drag(e) {
-        if (this.isDragging) {
-            const container = this.cube.parentNode;
-            let x = e.clientX - this.offsetX;
-            let y = e.clientY - this.offsetY;
+      // Boundary checks
+      const maxX = container.offsetWidth - selectedCube.offsetWidth;
+      const maxY = container.offsetHeight - selectedCube.offsetHeight;
 
-            x = Math.max(0, Math.min(x, container.offsetWidth - this.cube.offsetWidth));
-            y = Math.max(0, Math.min(y, container.offsetHeight - this.cube.offsetHeight));
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
 
-            this.cube.style.top = `${y}px`;
-            this.cube.style.left = `${x}px`;
-        }
-    }
-}
+      selectedCube.style.left = `${newX}px`;
+      selectedCube.style.top = `${newY}px`;
+    });
 
-const cubes = document.querySelectorAll('.cube');
-cubes.forEach((cube) => new DraggableCube(cube));
-
-
-</script>
-
-  </body>
+    document.addEventListener("mouseup", () => {
+      if (selectedCube) {
+        selectedCube.style.cursor = "grab";
+        selectedCube = null;
+      }
+    });
+  </script>
+</body>
 </html>
